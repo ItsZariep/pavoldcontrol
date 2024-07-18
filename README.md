@@ -9,7 +9,7 @@ I'm going to try to backport the most important commits from the main project, b
 
 ## Build
 ```
- meson setup build
+meson setup build
 ```
 ```
 meson compile -C build
