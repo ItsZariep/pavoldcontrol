@@ -24,7 +24,9 @@
 
 #include "i18n.h"
 
+#ifdef HAVE_LIBCANBERRA
 #include <canberra-gtk.h>
+#endif
 
 #include "pavuapplication.h"
 #include "pavucontrol.h"

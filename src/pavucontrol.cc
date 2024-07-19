@@ -29,7 +29,9 @@
 #include <json-glib/json-glib.h>
 #endif
 
+#ifdef HAVE_LIBCANBERRA
 #include <canberra-gtk.h>
+#endif
 
 #include "pavucontrol.h"
 #include "i18n.h"
@@ -916,7 +918,9 @@ MainWindow* pavucontrol_get_window(pa_glib_mainloop *m, bool maximize, bool _ret
     tab_number = _tab_number;
     retry = _retry;
 
+#ifdef HAVE_LIBCANBERRA
     ca_context_set_driver(ca_gtk_context_get(), "pulse");
+#endif
 
     mainWindow = MainWindow::create(maximize);
 

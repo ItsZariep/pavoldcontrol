@@ -24,7 +24,10 @@
 
 #include "sinkwidget.h"
 
+#ifdef HAVE_LIBCANBERRA
 #include <canberra-gtk.h>
+#endif
+
 #if HAVE_EXT_DEVICE_RESTORE_API
 #  include <pulse/format.h>
 #  include <pulse/ext-device-restore.h>
@@ -120,6 +123,7 @@ void SinkWidget::executeVolumeUpdate() {
 
     pa_operation_unref(o);
 
+#ifdef HAVE_LIBCANBERRA
     ca_context_playing(ca_gtk_context_get(), 2, &playing);
     if (playing)
         return;
@@ -136,6 +140,7 @@ void SinkWidget::executeVolumeUpdate() {
                            NULL);
 
     ca_context_change_device(ca_gtk_context_get(), NULL);
+#endif
 }
 
 void SinkWidget::onMuteToggleButton() {
