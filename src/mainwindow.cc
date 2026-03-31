@@ -707,7 +707,7 @@ void MainWindow::createMonitorStreamForSinkInput(SinkInputWidget* w, uint32_t si
         w->peak = NULL;
     }
 
-    w->peak = createMonitorStreamForSource(sinkWidgets[sink_idx]->monitor_index, w->index);
+    w->peak = createMonitorStreamForSource(sinkWidgets[sink_idx]->monitor_index, w->index, true);
 }
 
 void MainWindow::updateSource(const pa_source_info &info) {
@@ -716,6 +716,10 @@ void MainWindow::updateSource(const pa_source_info &info) {
     const char *icon;
     std::map<uint32_t, CardWidget*>::iterator cw;
     std::set<pa_source_port_info,source_port_prio_compare> port_priorities;
+
+    SourceType type = info.monitor_of_sink != PA_INVALID_INDEX
+        ? SOURCE_MONITOR
+        : (info.flags & PA_SOURCE_HARDWARE ? SOURCE_HARDWARE : SOURCE_VIRTUAL);
 
     if (sourceWidgets.count(info.index))
         w = sourceWidgets[info.index];
@@ -731,7 +735,11 @@ void MainWindow::updateSource(const pa_source_info &info) {
         w->setVolumeMeterVisible(showVolumeMetersCheckButton->get_active());
 
         if (pa_context_get_server_protocol_version(get_context()) >= 13)
-            w->peak = createMonitorStreamForSource(info.index, -1, !!(info.flags & PA_SOURCE_NETWORK));
+            w->peak = createMonitorStreamForSource(
+                info.index,
+                -1,
+                !!(info.flags & PA_SOURCE_NETWORK) || type == SOURCE_MONITOR
+            );
     }
 
     w->updating = true;
@@ -739,7 +747,7 @@ void MainWindow::updateSource(const pa_source_info &info) {
     w->card_index = info.card;
     w->name = info.name;
     w->description = info.description;
-    w->type = info.monitor_of_sink != PA_INVALID_INDEX ? SOURCE_MONITOR : (info.flags & PA_SOURCE_HARDWARE ? SOURCE_HARDWARE : SOURCE_VIRTUAL);
+    w->type = type;
 
     w->boldNameLabel->set_text("");
     gchar *txt;
