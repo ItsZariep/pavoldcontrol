@@ -94,6 +94,7 @@ MainWindow::MainWindow(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>
     x->get_widget("sourceTypeComboBox", sourceTypeComboBox);
     x->get_widget("notebook", notebook);
     x->get_widget("showVolumeMetersCheckButton", showVolumeMetersCheckButton);
+    x->get_widget("hideUnavailableCardProfilesCheckButton", hideUnavailableCardProfilesCheckButton);
 
     sourcesVBox->signal_size_allocate().connect([this](Gdk::Rectangle _unused){ sourcesVBox->queue_draw(); });
     cardsVBox->signal_size_allocate().connect([this](Gdk::Rectangle _unused){ cardsVBox->queue_draw(); });
@@ -111,7 +112,7 @@ MainWindow::MainWindow(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>
     sinkTypeComboBox->signal_changed().connect(sigc::mem_fun(*this, &MainWindow::onSinkTypeComboBoxChanged));
     sourceTypeComboBox->signal_changed().connect(sigc::mem_fun(*this, &MainWindow::onSourceTypeComboBoxChanged));
     showVolumeMetersCheckButton->signal_toggled().connect(sigc::mem_fun(*this, &MainWindow::onShowVolumeMetersCheckButtonToggled));
-
+    hideUnavailableCardProfilesCheckButton->signal_toggled().connect(sigc::mem_fun(*this, &MainWindow::onHideUnavailableCardProfilesCheckButtonToggled));
 
     GKeyFile* config = g_key_file_new();
     g_assert(config);
@@ -129,6 +130,9 @@ MainWindow::MainWindow(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>
          * volume meters. */
         if (g_key_file_has_key(config, "window", "showVolumeMeters", NULL)) {
             showVolumeMetersCheckButton->set_active(g_key_file_get_boolean(config, "window", "showVolumeMeters", NULL));
+        }
+        if (g_key_file_has_key(config, "window", "hideUnavailableCardProfiles", NULL)) {
+            hideUnavailableCardProfilesCheckButton->set_active(g_key_file_get_boolean(config, "window", "hideUnavailableCardProfiles", NULL));
         }
 
         int default_width, default_height;
@@ -242,6 +246,7 @@ MainWindow::~MainWindow() {
     g_key_file_set_integer(config, "window", "sinkType", sinkTypeComboBox->get_active_row_number());
     g_key_file_set_integer(config, "window", "sourceType", sourceTypeComboBox->get_active_row_number());
     g_key_file_set_integer(config, "window", "showVolumeMeters", showVolumeMetersCheckButton->get_active());
+    g_key_file_set_integer(config, "window", "hideUnavailableCardProfiles", hideUnavailableCardProfilesCheckButton->get_active());
 
     gsize filelen;
     GError *err = NULL;
@@ -368,6 +373,7 @@ void MainWindow::updateCard(const pa_card_info &info) {
         cardsVBox->pack_start(*w, false, false, 0);
         w->unreference();
         w->index = info.index;
+        w->hideUnavailableProfiles = hideUnavailableCardProfilesCheckButton->get_active();
         is_new = true;
     }
 
@@ -410,7 +416,7 @@ void MainWindow::updateCard(const pa_card_info &info) {
 
     w->profiles.clear();
     for (std::set<pa_card_profile_info2>::iterator profileIt = profile_priorities.begin(); profileIt != profile_priorities.end(); ++profileIt) {
-        bool hasNo = false, hasOther = false;
+        bool hasNo = false, hasOther = false, available = true;
         std::map<Glib::ustring, PortInfo>::iterator portIt;
         Glib::ustring desc = profileIt->description;
 
@@ -427,19 +433,22 @@ void MainWindow::updateCard(const pa_card_info &info) {
                 break;
             }
         }
-        if (hasNo && !hasOther)
-            desc += _(" (unplugged)");
 
-        if (!profileIt->available)
+        if (hasNo && !hasOther) {
+            desc += _(" (unplugged)");
+            available = false;
+        }
+
+        if (!profileIt->available) {
             desc += _(" (unavailable)");
+            available = false;
+        }
 
         w->profiles.push_back(std::pair<Glib::ustring, Glib::ustring>(profileIt->name, desc));
+        w->availableProfiles[profileIt->name] = available;
     }
 
     w->activeProfile = info.active_profile ? info.active_profile->name : "";
-
-    /* Because the port info for sinks and sources is discontinued we need
-     * to update the port info for them here. */
 
     if (w->hasSinks) {
         std::map<uint32_t, SinkWidget*>::iterator it;
@@ -1439,5 +1448,15 @@ void MainWindow::onShowVolumeMetersCheckButtonToggled() {
                 pa_operation_unref(o);
         }
         sw->setVolumeMeterVisible(state);
+    }
+}
+
+void MainWindow::onHideUnavailableCardProfilesCheckButtonToggled() {
+    bool state = hideUnavailableCardProfilesCheckButton->get_active();
+
+    for (std::map<uint32_t, CardWidget*>::iterator it = cardWidgets.begin() ; it != cardWidgets.end(); it++) {
+        CardWidget *cw = it->second;
+        cw->hideUnavailableProfiles = state;
+        cw->prepareMenu();
     }
 }

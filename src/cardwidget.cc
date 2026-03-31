@@ -52,6 +52,7 @@ CardWidget::CardWidget(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>
     codecList->signal_changed().connect( sigc::mem_fun(*this, &CardWidget::onCodecChange));
 
     hasProfileLock = false;
+    hideUnavailableProfiles = false;
 
     profileLockToggleButton->signal_clicked().connect(sigc::mem_fun(*this, &CardWidget::onProfileLockToggleButton));
     profileLockToggleButton->set_sensitive(true);
@@ -73,15 +74,17 @@ void CardWidget::prepareMenu() {
     profileListStore->clear();
     active_idx = -1;
     /* Fill the ComboBox's Tree Model */
-    for (uint32_t i = 0; i < profiles.size(); ++i) {
+    for (uint32_t i = 0, idx = 0; i < profiles.size(); ++i) {
+        if (hideUnavailableProfiles && !availableProfiles[profiles[i].first])
+            continue;
         Gtk::TreeModel::Row row = *(profileListStore->append());
         row[profileModel.name] = profiles[i].first;
         row[profileModel.desc] = profiles[i].second;
         if (profiles[i].first == activeProfile)
-          active_idx = i;
+          active_idx = idx;
     }
 
-    if (active_idx >= 0)
+    if (profiles.size())
         profileList->set_active(active_idx);
 
     codecListStore->clear();

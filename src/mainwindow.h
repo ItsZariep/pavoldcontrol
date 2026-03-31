@@ -79,7 +79,7 @@ public:
     Gtk::VBox *streamsVBox, *recsVBox, *sinksVBox, *sourcesVBox, *cardsVBox;
     Gtk::Label *noStreamsLabel, *noRecsLabel, *noSinksLabel, *noSourcesLabel, *noCardsLabel, *connectingLabel;
     Gtk::ComboBox *sinkInputTypeComboBox, *sourceOutputTypeComboBox, *sinkTypeComboBox, *sourceTypeComboBox;
-    Gtk::CheckButton *showVolumeMetersCheckButton;
+    Gtk::CheckButton *showVolumeMetersCheckButton, *hideUnavailableCardProfilesCheckButton;
 
     std::map<uint32_t, CardWidget*> cardWidgets;
     std::map<uint32_t, SinkWidget*> sinkWidgets;
@@ -98,6 +98,7 @@ public:
     virtual void onSinkTypeComboBoxChanged();
     virtual void onSourceTypeComboBoxChanged();
     virtual void onShowVolumeMetersCheckButtonToggled();
+    virtual void onHideUnavailableCardProfilesCheckButtonToggled();
 
     void setConnectionState(gboolean connected);
     void updateDeviceVisibility();
