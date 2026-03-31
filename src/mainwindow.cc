@@ -1004,7 +1004,7 @@ bool MainWindow::createEventRoleWidget() {
     eventRoleWidget->boldNameLabel->set_text("");
     eventRoleWidget->nameLabel->set_label(_("System Sounds"));
 
-    eventRoleWidget->iconImage->set_from_icon_name("multimedia-volume-control", Gtk::ICON_SIZE_SMALL_TOOLBAR);
+    eventRoleWidget->iconImage->set_from_icon_name("org.pulseaudio.pavucontrol", Gtk::ICON_SIZE_SMALL_TOOLBAR);
 
     eventRoleWidget->device = "";
 

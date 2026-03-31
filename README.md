@@ -7,6 +7,9 @@ For some users or context, it is more comfortable to use the version with GTK3 i
 ### Is Updated?
 I'm going to try to backport the most important commits from the main project, but as long as the program works, I most likely won't touch it.
 
+> [!Note]
+> I moved to Pavucontrol-qt, however, if you miss a feature from updated pavucontrol, i guess i can try to backport anyways, PRs will be also welcome
+
 ## Build
 ```
 meson setup build
