@@ -36,7 +36,9 @@ MinimalStreamWidget::MinimalStreamWidget(BaseObjectType* cobject) :
     peak(NULL),
     updating(false),
     volumeMeterEnabled(false),
-    volumeMeterVisible(true) {
+    volumeMeterVisible(true),
+    decayTickId(0),
+    decayLastFrameTime(-1) {
 }
 
 MinimalStreamWidget::~MinimalStreamWidget() {
@@ -61,13 +63,17 @@ void MinimalStreamWidget::init() {
     peakProgressBar.hide();
 }
 
-#define DECAY_STEP (1.0 / PEAKS_RATE)
+void MinimalStreamWidget::stopDecay() {
+    if (decayTickId) {
+        remove_tick_callback(decayTickId);
+        decayTickId = 0;
+    }
+}
 
-void MinimalStreamWidget::updatePeak(double v) {
-
-    if (lastPeak >= DECAY_STEP)
-        if (v < lastPeak - DECAY_STEP)
-            v = lastPeak - DECAY_STEP;
+void MinimalStreamWidget::updatePeak(double v, double decayStep) {
+    if (lastPeak >= decayStep)
+        if (v < lastPeak - decayStep)
+            v = lastPeak - decayStep;
 
     lastPeak = v;
 
@@ -99,6 +105,40 @@ void MinimalStreamWidget::setVolumeMeterVisible(bool v) {
             peakProgressBar.show();
         }
     } else {
+        stopDecay();
         peakProgressBar.hide();
     }
+}
+
+bool MinimalStreamWidget::decayOnTick(const Glib::RefPtr<Gdk::FrameClock>& frameClock) {
+    auto frameTime = frameClock->get_frame_time();
+
+    if (lastPeak == 0) {
+        decayTickId = 0;
+        return false;
+    }
+
+    // Scale elapsed time (µs) so we decay in at most 1 second
+    if (frameTime != decayLastFrameTime)
+        updatePeak(0, (frameTime - decayLastFrameTime) / 1000000.0);
+
+    decayLastFrameTime = frameTime;
+
+    return true;
+}
+
+void MinimalStreamWidget::decayToZero() {
+    if (decayTickId)
+        stopDecay();
+
+    auto frameClock = get_frame_clock();
+
+    if (!frameClock) {
+        /* Widget isn't visible, set all the way to 0 */
+        updatePeak(0, 1.0);
+        return;
+    }
+
+    decayLastFrameTime = frameClock->get_frame_time();
+    decayTickId = add_tick_callback(sigc::mem_fun(*this, &MinimalStreamWidget::decayOnTick));
 }
