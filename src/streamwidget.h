@@ -32,9 +32,9 @@ class ChannelWidget;
 #define UNKNOWN_DEVICE_NAME "#unknown#"
 
 class StreamWidget : public MinimalStreamWidget {
-public:
-    StreamWidget(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& x);
-    void init(MainWindow* mainWindow);
+  public:
+    StreamWidget(BaseObjectType *cobject, const Glib::RefPtr<Gtk::Builder> &x);
+    void init(MainWindow *mainWindow);
 
     void setChannelMap(const pa_channel_map &m, bool can_decibel);
     void setVolume(const pa_cvolume &volume, bool force = false);
@@ -53,7 +53,7 @@ public:
 
     virtual void onMuteToggleButton();
     virtual void onLockToggleButton();
-    virtual bool onContextTriggerEvent(GdkEventButton*);
+    virtual bool onContextTriggerEvent(GdkEventButton *);
 
     sigc::connection timeoutConnection;
 
@@ -63,8 +63,8 @@ public:
     virtual void onKill();
     virtual void onDeviceComboBoxChanged();
 
-protected:
-    MainWindow* mpMainWindow;
+  protected:
+    MainWindow *mpMainWindow;
 
     Gtk::Menu contextMenu;
     Gtk::MenuItem terminate;

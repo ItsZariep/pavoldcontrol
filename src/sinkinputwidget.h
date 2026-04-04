@@ -28,9 +28,10 @@
 class MainWindow;
 
 class SinkInputWidget : public StreamWidget {
-public:
-    SinkInputWidget(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& x);
-    static SinkInputWidget* create(MainWindow* mainWindow);
+  public:
+    SinkInputWidget(BaseObjectType *cobject,
+                    const Glib::RefPtr<Gtk::Builder> &x);
+    static SinkInputWidget *create(MainWindow *mainWindow);
     ~SinkInputWidget(void);
 
     SinkInputType type;
@@ -44,7 +45,7 @@ public:
     virtual void onKill();
     virtual void onDeviceComboBoxChanged();
 
-private:
+  private:
     uint32_t mSinkIndex;
 };
 
