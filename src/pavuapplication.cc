@@ -51,7 +51,7 @@ PavuApplication::PavuApplication() :
 }
 
 /*
- * Create the main window and connect its "on_hide_window" signal to our cleanup
+ * Create the main window and connect its "on_close_window" signal to our cleanup
  * function
  */
 MainWindow* PavuApplication::create_window()
@@ -63,7 +63,7 @@ MainWindow* PavuApplication::create_window()
 
     pavucontrol_window->signal_hide().connect(
                      sigc::bind<Gtk::Window*>(sigc::mem_fun(*this,
-                     &PavuApplication::on_hide_window), pavucontrol_window));
+                     &PavuApplication::on_close_window), pavucontrol_window));
 
     return pavucontrol_window;
 }
@@ -91,12 +91,12 @@ void PavuApplication::on_activate()
     mainWindow->present();
 }
 
-/* "on_hide_window" signal handler
+/* "on_close_window" signal handler
  * This is executed in the first-running process and performs cleanup before
  * exiting : when the last registered window of Gtk::Application is closed,
  * the application's run() function returns.
  */
-void PavuApplication::on_hide_window(Gtk::Window* window)
+void PavuApplication::on_close_window(Gtk::Window* window)
 {
     delete window;
     mainWindow = NULL;

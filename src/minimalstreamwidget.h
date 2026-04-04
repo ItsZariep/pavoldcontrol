@@ -21,7 +21,8 @@
 #ifndef minimalstreamwidget_h
 #define minimalstreamwidget_h
 
-#include "pavucontrol.h"
+#include <gtkmm.h>
+#include <pulse/pulseaudio.h>
 
 #define PEAKS_RATE 144
 #define DECAY_STEP (1.0 / PEAKS_RATE)
@@ -59,7 +60,7 @@ class MinimalStreamWidget : public Gtk::VBox {
   protected:
     /* Subclasses must call this after the constructor to finalize the initial
      * layout. */
-    virtual void init();
+    void init();
     bool decayOnTick(const Glib::RefPtr<Gdk::FrameClock> &frame_clock);
 
   private:

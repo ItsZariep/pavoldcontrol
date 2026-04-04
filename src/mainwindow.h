@@ -29,6 +29,10 @@ class MainWindow;
 #include <pulse/ext-device-restore.h>
 #endif
 
+#ifdef HAVE_LIBCANBERRA
+#include <canberra.h>
+#endif
+
 #include <unordered_map>
 
 class CardWidget;
@@ -125,6 +129,10 @@ class MainWindow : public Gtk::Window {
     Glib::ustring defaultSinkName, defaultSourceName;
 
     bool canRenameDevices;
+
+#ifdef HAVE_LIBCANBERRA
+    ca_context *canberraContext;
+#endif
 
   protected:
     virtual void on_realize();

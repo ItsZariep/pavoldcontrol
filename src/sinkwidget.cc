@@ -113,8 +113,6 @@ SinkWidget* SinkWidget::create(MainWindow* mainWindow) {
 
 void SinkWidget::executeVolumeUpdate() {
     pa_operation* o;
-    char dev[64];
-    int playing = 0;
 
     if (!(o = pa_context_set_sink_volume_by_index(get_context(), index, &volume, NULL, NULL))) {
         show_error(_("pa_context_set_sink_volume_by_index() failed"));
@@ -124,6 +122,8 @@ void SinkWidget::executeVolumeUpdate() {
     pa_operation_unref(o);
 
 #ifdef HAVE_LIBCANBERRA
+    char dev[64];
+    int playing = 0;
     ca_context_playing(ca_gtk_context_get(), 2, &playing);
     if (playing)
         return;

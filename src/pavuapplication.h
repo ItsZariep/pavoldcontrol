@@ -22,7 +22,6 @@
 #define pavuapplication_h
 
 #include "mainwindow.h"
-#include "pavucontrol.h"
 
 class PavuApplication : public Gtk::Application {
   public:
@@ -45,7 +44,7 @@ class PavuApplication : public Gtk::Application {
 
   private:
     MainWindow *create_window();
-    void on_hide_window(Gtk::Window *window);
+    void on_close_window(Gtk::Window *window);
 
     pa_glib_mainloop *m;
 };

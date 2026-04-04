@@ -35,17 +35,12 @@
 
 #include "pavucontrol.h"
 #include "i18n.h"
-#include "minimalstreamwidget.h"
-#include "channelwidget.h"
 #include "streamwidget.h"
-#include "cardwidget.h"
-#include "sinkwidget.h"
-#include "sourcewidget.h"
 #include "sinkinputwidget.h"
 #include "sourceoutputwidget.h"
-#include "rolewidget.h"
 #include "mainwindow.h"
 #include "pavuapplication.h"
+
 
 #include <unordered_map>
 #include <utility>
