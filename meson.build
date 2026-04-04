@@ -4,13 +4,11 @@ project('pavucontrol', 'cpp',
         default_options : [ 'c_std=gnu11', 'cpp_std=c++11' ]
         )
 
-with_lynx = get_option('lynx')
-
 cpp = meson.get_compiler('cpp')
 
 gtkmm_dep = dependency('gtkmm-3.0', version : '>= 3.0', required : true)
 sigcpp_dep = dependency('sigc++-2.0', required : true)
-canberragtk_dep = dependency('libcanberra-gtk3', version : '>= 0.16', required : false)
+canberragtk_dep = dependency('libcanberra', version : '>= 0.16', required : get_option('audio-feedback'))
 
 libpulse_dep = dependency('libpulse', version : '>= 5.0', required : true)
 libpulsemlglib_dep = dependency('libpulse-mainloop-glib', version : '>= 0.9.16', required : true)
@@ -21,7 +19,7 @@ have_pulse_messaging_api = cpp.has_function('pa_context_send_message_to_object',
 
 json_glib_dep = dependency('json-glib-1.0', required : have_pulse_messaging_api)
 
-lynx = find_program('lynx', required: with_lynx)
+lynx = find_program('lynx', required: get_option('lynx'))
 tidy = find_program('tidy', required: false)
 
 configinc = include_directories('.')
