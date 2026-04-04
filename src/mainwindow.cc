@@ -100,6 +100,7 @@ MainWindow::MainWindow(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>
     x->get_widget("notebook", notebook);
     x->get_widget("showVolumeMetersCheckButton", showVolumeMetersCheckButton);
     x->get_widget("hideUnavailableCardProfilesCheckButton", hideUnavailableCardProfilesCheckButton);
+    x->get_widget("monoAudioSwitch", monoAudioSwitch);
 
     sourcesVBox->signal_size_allocate().connect([this](Gdk::Rectangle _unused){ sourcesVBox->queue_draw(); });
     cardsVBox->signal_size_allocate().connect([this](Gdk::Rectangle _unused){ cardsVBox->queue_draw(); });
@@ -118,6 +119,12 @@ MainWindow::MainWindow(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>
     sourceTypeComboBox->signal_changed().connect(sigc::mem_fun(*this, &MainWindow::onSourceTypeComboBoxChanged));
     showVolumeMetersCheckButton->signal_toggled().connect(sigc::mem_fun(*this, &MainWindow::onShowVolumeMetersCheckButtonToggled));
     hideUnavailableCardProfilesCheckButton->signal_toggled().connect(sigc::mem_fun(*this, &MainWindow::onHideUnavailableCardProfilesCheckButtonToggled));
+
+#if HAVE_PULSE_MESSAGING_API
+    if (monoAudioSwitch)
+        monoAudioSwitch->property_active().signal_changed().connect(
+        sigc::mem_fun(*this, &MainWindow::onMonoAudioStateSet));
+#endif
 
     GKeyFile* config = g_key_file_new();
     g_assert(config);
@@ -1494,5 +1501,27 @@ void MainWindow::onHideUnavailableCardProfilesCheckButtonToggled() {
         CardWidget *cw = it->second;
         cw->hideUnavailableProfiles = state;
         cw->prepareMenu();
+    }
+}
+
+void MainWindow::onMonoAudioStateSet() {
+    if (!monoAudioSwitch)
+        return;	
+
+    bool state = monoAudioSwitch->get_active();
+
+    pa_context *c = get_context();
+    if (!c)
+    {
+        return;
+    }
+
+    const char *value = state ? "true" : "false";
+
+    pa_operation *o = pa_context_send_message_to_object(c, "/core", "pipewire-pulse:force-mono-output", value, NULL, NULL);
+
+    if (o)
+    {
+        pa_operation_unref(o);
     }
 }
