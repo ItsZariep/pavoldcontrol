@@ -619,6 +619,18 @@ static void probe_force_mono_output_cb(pa_context *c, int success, char *respons
     dec_outstanding(w);
 }
 
+static void probe_bt_autoswitch_cb(pa_context *c, int success, char *response, void *userdata)
+{
+    MainWindow *w = static_cast<MainWindow*>(userdata);
+
+    if (success && response && strcmp(response, "null") != 0) {
+        /* We know the setting is supported */
+        w->btAutoswitchSwitch->set_sensitive(true);
+    }
+
+    dec_outstanding(w);
+}
+
 void subscribe_cb(pa_context *c, pa_subscription_event_type_t t, uint32_t index, void *userdata) {
     MainWindow *w = static_cast<MainWindow*>(userdata);
 
@@ -849,6 +861,10 @@ void context_state_callback(pa_context *c, void *userdata) {
                 n_outstanding++;
             } else
                 g_debug(_("Failed to check if we can force mono audio: %s"), pa_strerror(pa_context_errno(context)));
+            if ((o = pa_context_send_message_to_object(c, "/core", "pipewire-pulse:bluetooth-headset-autoswitch", NULL, probe_bt_autoswitch_cb, w))) {
+                n_outstanding++;
+            } else
+                g_debug(_("Failed to check if we can autoswitch to bluetooth mic: %s"), pa_strerror(pa_context_errno(context)));
 #endif
 
             break;

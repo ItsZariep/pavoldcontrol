@@ -101,6 +101,7 @@ MainWindow::MainWindow(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>
     x->get_widget("showVolumeMetersCheckButton", showVolumeMetersCheckButton);
     x->get_widget("hideUnavailableCardProfilesCheckButton", hideUnavailableCardProfilesCheckButton);
     x->get_widget("monoAudioSwitch", monoAudioSwitch);
+    x->get_widget("btAutoswitchSwitch", btAutoswitchSwitch);
 
     sourcesVBox->signal_size_allocate().connect([this](Gdk::Rectangle _unused){ sourcesVBox->queue_draw(); });
     cardsVBox->signal_size_allocate().connect([this](Gdk::Rectangle _unused){ cardsVBox->queue_draw(); });
@@ -122,8 +123,9 @@ MainWindow::MainWindow(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>
 
 #if HAVE_PULSE_MESSAGING_API
     if (monoAudioSwitch)
-        monoAudioSwitch->property_active().signal_changed().connect(
-        sigc::mem_fun(*this, &MainWindow::onMonoAudioStateSet));
+        monoAudioSwitch->property_active().signal_changed().connect(sigc::mem_fun(*this, &MainWindow::onMonoAudioStateSet));
+    if (btAutoswitchSwitch)
+        btAutoswitchSwitch->property_active().signal_changed().connect(sigc::mem_fun(*this, &MainWindow::onBtAutoswitchSet));
 #endif
 
     GKeyFile* config = g_key_file_new();
@@ -1524,4 +1526,23 @@ void MainWindow::onMonoAudioStateSet() {
     {
         pa_operation_unref(o);
     }
+}
+
+void MainWindow::onBtAutoswitchSet() {
+    if (!btAutoswitchSwitch)
+        return;
+
+    bool state = btAutoswitchSwitch->get_active(); // or property_active().get_value()
+
+    pa_context *c = get_context();
+    const char *value = state ? "true" : "false";
+
+    pa_operation *o = pa_context_send_message_to_object(
+        c, "/core",
+        "pipewire-pulse:bluetooth-headset-autoswitch",
+        value, NULL, NULL
+    );
+
+    if (o)
+        pa_operation_unref(o);
 }

@@ -90,7 +90,7 @@ class MainWindow : public Gtk::Window {
     Gtk::ComboBox *sinkInputTypeComboBox, *sourceOutputTypeComboBox,
         *sinkTypeComboBox, *sourceTypeComboBox;
     Gtk::CheckButton *showVolumeMetersCheckButton,
-        *hideUnavailableCardProfilesCheckButton, *monoAudioSwitch;
+        *hideUnavailableCardProfilesCheckButton, *monoAudioSwitch, *btAutoswitchSwitch;
 
     std::map<uint32_t, CardWidget *> cardWidgets;
     std::map<uint32_t, SinkWidget *> sinkWidgets;
@@ -110,7 +110,8 @@ class MainWindow : public Gtk::Window {
     virtual void onSourceTypeComboBoxChanged();
     virtual void onShowVolumeMetersCheckButtonToggled();
     virtual void onHideUnavailableCardProfilesCheckButtonToggled();
-	virtual void onMonoAudioStateSet();
+    virtual void onMonoAudioStateSet();
+    virtual void onBtAutoswitchSet();
 
     void setConnectionState(gboolean connected);
     void updateDeviceVisibility();
