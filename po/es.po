@@ -1,0 +1,148 @@
+# Spanish translations for PACKAGE package.
+# Copyright (C) 2026 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# ItsZariep <zariep@pc>, 2026.
+# Spanish translations for PACKAGE package.
+
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-04 14:09-0600\n"
+"PO-Revision-Date: 2026-09-04 14:11-0600\n"
+"Last-Translator: ItsZariep [zariep@pc](mailto:zariep@pc)\n"
+"Language-Team: Spanish [es@tp.org.es](mailto:es@tp.org.es)\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/main.c:77
+msgid "Show:"
+msgstr "Mostrar:"
+
+#: src/main.c:139
+msgid "Show volume meters"
+msgstr "Mostrar medidores de volumen"
+
+#: src/main.c:145
+msgid "Hide unavailable card profiles"
+msgstr "Ocultar perfiles de tarjetas no disponibles"
+
+#: src/main.c:152
+msgid "Configure all output devices as mono"
+msgstr "Configurar todos los dispositivos de salida como mono"
+
+#: src/main.c:166
+msgid "Volume Control"
+msgstr "Control de volumen"
+
+#: src/main.c:182
+msgid "Playback"
+msgstr "Reproducción"
+
+#: src/main.c:182
+msgid "No applications are playing audio."
+msgstr "Ninguna aplicación está reproduciendo audio."
+
+#: src/main.c:184
+msgid "Recording"
+msgstr "Grabación"
+
+#: src/main.c:184
+msgid "No applications are recording audio."
+msgstr "Ninguna aplicación está grabando audio."
+
+#: src/main.c:186
+msgid "Output Devices"
+msgstr "Dispositivos de salida"
+
+#: src/main.c:186
+msgid "No output devices available."
+msgstr "No hay dispositivos de salida disponibles."
+
+#: src/main.c:188
+msgid "Input Devices"
+msgstr "Dispositivos de entrada"
+
+#: src/main.c:188
+msgid "No input devices available."
+msgstr "No hay dispositivos de entrada disponibles."
+
+#: src/main.c:190
+msgid "Configuration"
+msgstr "Configuración"
+
+#: src/main.c:190
+msgid "No audio hardware detected."
+msgstr "No se detectó ningún dispositivo de audio."
+
+#: src/main.c:204 src/main.c:211
+msgid "All Streams"
+msgstr "Todos los flujos"
+
+#: src/main.c:204 src/main.c:211
+msgid "Applications"
+msgstr "Aplicaciones"
+
+#: src/main.c:204 src/main.c:211
+msgid "Virtual Streams"
+msgstr "Flujos virtuales"
+
+#: src/main.c:219
+msgid "All output devices"
+msgstr "Todos los dispositivos de salida"
+
+#: src/main.c:219
+msgid "Hardware output devices"
+msgstr "Dispositivos de salida de hardware"
+
+#: src/main.c:219
+msgid "Virtual output devices"
+msgstr "Dispositivos de salida virtuales"
+
+#: src/main.c:226
+msgid "All input devices"
+msgstr "Todos los dispositivos de entrada"
+
+#: src/main.c:226
+msgid "All except monitors"
+msgstr "Todos excepto los monitores"
+
+#: src/main.c:227
+msgid "Hardware input devices"
+msgstr "Dispositivos de entrada de hardware"
+
+#: src/main.c:227
+msgid "Virtual input devices"
+msgstr "Dispositivos de entrada virtuales"
+
+#: src/main.c:227
+msgid "Monitors"
+msgstr "Monitores"
+
+#: src/main.c:306
+msgid "Could not connect to PulseAudio."
+msgstr "No se pudo conectar a PulseAudio."
+
+#: src/row.c:205
+msgid "Profile"
+msgstr "Perfil"
+
+#: src/row.c:222
+msgid "on"
+msgstr "en"
+
+#: src/row.c:222
+msgid "from"
+msgstr "de"
+
+#: src/row.c:247
+msgid "Lock channels together"
+msgstr "Bloquear canales juntos"
+
+#: src/row.c:266
+msgid "Preferred"
+msgstr "Preferido"

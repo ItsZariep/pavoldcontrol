@@ -1,0 +1,30 @@
+# Pavoldcontrol
+
+~~Pavucontrol fork that still uses gtk3 (Based on <a href="https://github.com/pulseaudio/pavucontrol/commit/52aef7e81d9c44601e78bac4930084b513a2936e">2aef7e</a>)~~
+
+Pavucontrol **Rewrite** that uses GTK3
+
+### Why rewritten
+
+I don't mean to say the original code was bad, but it clearly wasn't written in my style (e.g i don't like glade files, or code using goto states on many functions) and would have been a headache in the long run. I prefer to build it from scratch in a simpler way and with more compact code.
+
+### Why?
+For some users or context, it is more comfortable to use the version with GTK3 instead of GTK4, for example systems that do not use GTK4 at all (XFCE, MATE, LXDE, etc), or users who simply do not have it configured so that the theme fits, in my case, I use Wayfire and Pavucontrol GTK4 gives me a lot of problems with window decoration.
+
+### Is Updated?
+I'm going to try to implement the most important features from the main project, but as long as the program works, I most likely won't touch it.
+
+> [!Note]
+> I moved to Pavucontrol-qt, however, if you miss a feature or want something different, i guess i can try to implement it anyways, PRs will be also welcome
+
+## Build
+
+```
+git clone https://github.com/itszariep/pavoldcontrol
+cd pavoldcontrol
+```
+```
+make
+```
+
+

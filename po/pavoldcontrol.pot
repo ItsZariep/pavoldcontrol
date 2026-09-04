@@ -1,0 +1,146 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-04 14:09-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/main.c:77
+msgid "Show:"
+msgstr ""
+
+#: src/main.c:139
+msgid "Show volume meters"
+msgstr ""
+
+#: src/main.c:145
+msgid "Hide unavailable card profiles"
+msgstr ""
+
+#: src/main.c:152
+msgid "Configure all output devices as mono"
+msgstr ""
+
+#: src/main.c:166
+msgid "Volume Control"
+msgstr ""
+
+#: src/main.c:182
+msgid "Playback"
+msgstr ""
+
+#: src/main.c:182
+msgid "No applications are playing audio."
+msgstr ""
+
+#: src/main.c:184
+msgid "Recording"
+msgstr ""
+
+#: src/main.c:184
+msgid "No applications are recording audio."
+msgstr ""
+
+#: src/main.c:186
+msgid "Output Devices"
+msgstr ""
+
+#: src/main.c:186
+msgid "No output devices available."
+msgstr ""
+
+#: src/main.c:188
+msgid "Input Devices"
+msgstr ""
+
+#: src/main.c:188
+msgid "No input devices available."
+msgstr ""
+
+#: src/main.c:190
+msgid "Configuration"
+msgstr ""
+
+#: src/main.c:190
+msgid "No audio hardware detected."
+msgstr ""
+
+#: src/main.c:204 src/main.c:211
+msgid "All Streams"
+msgstr ""
+
+#: src/main.c:204 src/main.c:211
+msgid "Applications"
+msgstr ""
+
+#: src/main.c:204 src/main.c:211
+msgid "Virtual Streams"
+msgstr ""
+
+#: src/main.c:219
+msgid "All output devices"
+msgstr ""
+
+#: src/main.c:219
+msgid "Hardware output devices"
+msgstr ""
+
+#: src/main.c:219
+msgid "Virtual output devices"
+msgstr ""
+
+#: src/main.c:226
+msgid "All input devices"
+msgstr ""
+
+#: src/main.c:226
+msgid "All except monitors"
+msgstr ""
+
+#: src/main.c:227
+msgid "Hardware input devices"
+msgstr ""
+
+#: src/main.c:227
+msgid "Virtual input devices"
+msgstr ""
+
+#: src/main.c:227
+msgid "Monitors"
+msgstr ""
+
+#: src/main.c:306
+msgid "Could not connect to PulseAudio."
+msgstr ""
+
+#: src/row.c:205
+msgid "Profile"
+msgstr ""
+
+#: src/row.c:222
+msgid "on"
+msgstr ""
+
+#: src/row.c:222
+msgid "from"
+msgstr ""
+
+#: src/row.c:247
+msgid "Lock channels together"
+msgstr ""
+
+#: src/row.c:266
+msgid "Preferred"
+msgstr ""
