@@ -1,2 +1,6 @@
 pavucontrol
 pavucontrol.desktop
+
+*.o
+*.a
+*.so

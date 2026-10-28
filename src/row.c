@@ -1,5 +1,5 @@
 #include "app.h"
-#include "pa_backend.h"
+#include "a_backend.h"
 #include <string.h>
 #include <math.h>
 #include <glib/gi18n.h>
@@ -35,9 +35,9 @@ static void free_row_ctx(gpointer data, GClosure *closure)
 	g_free(data);
 }
 
-static pa_volume_t gtk_value_to_pa(double v)
+static guint32 gtk_value_to_vol(double v)
 {
-	return (pa_volume_t) lround(v * (double) PA_VOLUME_NORM / 100.0);
+	return (guint32) lround(v * (double) A_VOLUME_NORM / 100.0);
 }
 
 static gchar *format_slider_value(GtkScale *scale, gdouble value, gpointer user_data)
@@ -45,9 +45,8 @@ static gchar *format_slider_value(GtkScale *scale, gdouble value, gpointer user_
 	(void)scale;
 	(void)user_data;
 
-	pa_volume_t vol = gtk_value_to_pa(value);
-	double db = pa_sw_volume_to_dB(vol);
-	if (db <= PA_DECIBEL_MININFTY)
+	double db = a_volume_to_dB(gtk_value_to_vol(value));
+	if (isinf(db))
 	{
 		return g_strdup_printf("%.0f%% (-\xe2\x88\x9e dB)", value);
 	}
@@ -73,11 +72,11 @@ static gboolean apply_volume_debounced(gpointer user_data)
 
 	if (row->kind == ROW_PLAYBACK || row->kind == ROW_RECORDING)
 	{
-		pa_backend_stream_set_volume(ctx->app, row->kind, row->index, &row->volume);
+		a_backend_stream_set_volume(ctx->app, row->kind, row->index, &row->volume);
 	}
 	else
 	{
-		pa_backend_device_set_volume(ctx->app, row->kind, row->index, &row->volume);
+		a_backend_device_set_volume(ctx->app, row->kind, row->index, &row->volume);
 	}
 
 	return G_SOURCE_REMOVE;
@@ -92,7 +91,7 @@ static void apply_volume_from_sliders(RowCtx *ctx, gint changed_channel)
 
 	double changed_value = gtk_range_get_value(GTK_RANGE(row->sliders[changed_channel]));
 
-	pa_volume_t changed_vol = gtk_value_to_pa(changed_value);
+	guint32 changed_vol = gtk_value_to_vol(changed_value);
 
 	row->updating = TRUE;
 
@@ -142,9 +141,9 @@ static void on_mute_toggled(GtkToggleButton *btn, gpointer user_data)
 	gboolean mute = gtk_toggle_button_get_active(btn);
 
 	if (ctx->row->kind == ROW_PLAYBACK || ctx->row->kind == ROW_RECORDING)
-		pa_backend_stream_set_mute(ctx->app, ctx->row->kind, ctx->row->index, mute);
+		a_backend_stream_set_mute(ctx->app, ctx->row->kind, ctx->row->index, mute);
 	else
-		pa_backend_device_set_mute(ctx->app, ctx->row->kind, ctx->row->index, mute);
+		a_backend_device_set_mute(ctx->app, ctx->row->kind, ctx->row->index, mute);
 }
 
 static void on_lock_toggled(GtkToggleButton *btn, gpointer user_data)
@@ -165,14 +164,14 @@ static void on_combo_changed(GtkComboBox *combo, gpointer user_data)
 	{
 		case ROW_PLAYBACK:
 		case ROW_RECORDING:
-			pa_backend_stream_move(ctx->app, ctx->row->kind, ctx->row->index, id);
+			a_backend_stream_move(ctx->app, ctx->row->kind, ctx->row->index, id);
 			break;
 		case ROW_OUTPUT_DEV:
 		case ROW_INPUT_DEV:
-			pa_backend_device_set_port(ctx->app, ctx->row->kind, ctx->row->index, id);
+			a_backend_device_set_port(ctx->app, ctx->row->kind, ctx->row->index, id);
 			break;
 		case ROW_CARD:
-			pa_backend_card_set_profile(ctx->app, ctx->row->index, id);
+			a_backend_card_set_profile(ctx->app, ctx->row->index, id);
 			break;
 	}
 }
@@ -183,7 +182,7 @@ static void on_preferred_clicked(GtkButton *btn, gpointer user_data)
 	RowCtx *ctx = user_data;
 	if (ctx->row->device_name)
 	{
-		pa_backend_device_set_default(ctx->app, ctx->row->kind, ctx->row->device_name);
+		a_backend_device_set_default(ctx->app, ctx->row->kind, ctx->row->device_name);
 	}
 }
 
@@ -376,7 +375,7 @@ static void destroy_child(GtkWidget *child, gpointer user_data)
 	gtk_widget_destroy(child);
 }
 
-void row_set_channels(StreamRow *row, uint8_t n_channels, const pa_cvolume *vol)
+void row_set_channels(StreamRow *row, uint8_t n_channels, const AVolume *vol)
 {
 	if (n_channels > ROW_MAX_CHANNELS) n_channels = ROW_MAX_CHANNELS;
 
@@ -408,7 +407,7 @@ void row_set_channels(StreamRow *row, uint8_t n_channels, const pa_cvolume *vol)
 	row->updating = TRUE;
 	for (guint8 c = 0; c < n_channels; c++)
 	{
-		double pct = 100.0 * (double) vol->values[c] / (double) PA_VOLUME_NORM;
+		double pct = 100.0 * (double) vol->values[c] / (double) A_VOLUME_NORM;
 		gtk_range_set_value(GTK_RANGE(row->sliders[c]), pct);
 	}
 	row->updating = FALSE;
@@ -492,8 +491,8 @@ void row_free(gpointer data)
 		return;
 	if (row->volume_debounce_id != 0)
 		g_source_remove(row->volume_debounce_id);
-	if (row->meter_stream)
-		pa_backend_meter_detach(row);
+	if (row->meter_handle)
+		a_backend_meter_detach(row);
 	if (row->root && row->app && !row->app->shutting_down)
 		gtk_widget_destroy(row->root);
 	g_free(row->device_name);

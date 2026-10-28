@@ -2,7 +2,7 @@
 
 ~~Pavucontrol fork that still uses gtk3 (Based on <a href="https://github.com/pulseaudio/pavucontrol/commit/52aef7e81d9c44601e78bac4930084b513a2936e">2aef7e</a>)~~
 
-Pavucontrol **Rewrite** that uses GTK3
+Pavucontrol **Rewrite** that uses GTK3, optional pipewire backend available
 
 ### Why rewritten
 
@@ -23,8 +23,9 @@ I'm going to try to implement the most important features from the main project,
 git clone https://github.com/itszariep/pavoldcontrol
 cd pavoldcontrol
 ```
+
 ```
-make
+make BACKEND=pulse # or BACKEND=pipewire, default is pulse
 ```
 
 

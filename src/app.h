@@ -2,8 +2,8 @@
 #define APP_H
 
 #include <gtk/gtk.h>
-#include <pulse/pulseaudio.h>
-#include <pulse/glib-mainloop.h>
+#include <math.h>
+#include <stdint.h>
 
 #include "settings.h"
 
@@ -17,6 +17,21 @@ typedef enum
 } RowKind;
 
 #define ROW_MAX_CHANNELS 8
+
+#define A_VOLUME_NORM 0x10000u // backend neutral volume
+#define A_VOLUME_MAX_CHANNELS 32
+
+typedef struct {
+	guint8 channels;
+	guint32 values[A_VOLUME_MAX_CHANNELS];
+} AVolume;
+
+// -inf for 0
+static inline double a_volume_to_dB(guint32 v)
+{
+	if (v == 0) return -INFINITY;
+	return 60.0 * log10((double) v / (double) A_VOLUME_NORM);
+}
 
 typedef struct App App;
 
@@ -39,12 +54,12 @@ typedef struct {
 	GtkWidget *meter; // GtkLevelBar, may be NULL
 
 	guint8 n_channels;
-	pa_cvolume volume;
+	AVolume volume;
 	gboolean channels_locked;
 	gboolean updating; // guards signal feedback loops while we set values
 
 	gchar *device_name; // sink/source name, for ROW_OUTPUT_DEV/ROW_INPUT_DEV
-	pa_stream *meter_stream;
+	gpointer meter_handle; // backend-private meter state, NULL when detached
 
 	gboolean is_virtual;
 	gboolean is_hardware;
@@ -94,8 +109,7 @@ struct App {
 	GHashTable *sink_index_to_name;
 	GHashTable *source_index_to_name;
 
-	pa_glib_mainloop *pa_loop;
-	pa_context *pa_ctx;
+	gpointer backend; // backend private state
 
 	gchar *default_sink_name;
 	gchar *default_source_name;
@@ -113,7 +127,7 @@ void row_choice_free(gpointer data);
 void row_free(gpointer data);
 StreamRow *row_new(App *app, RowKind kind, guint32 index, GtkWidget *parent_box);
 void row_set_name(StreamRow *row, const gchar *name, const gchar *icon_name);
-void row_set_channels(StreamRow *row, uint8_t n_channels, const pa_cvolume *vol);
+void row_set_channels(StreamRow *row, uint8_t n_channels, const AVolume *vol);
 void row_set_mute(StreamRow *row, gboolean mute);
 
 void row_set_choices(StreamRow *row, GList *choices, const gchar *active_id);

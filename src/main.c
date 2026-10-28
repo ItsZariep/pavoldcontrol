@@ -1,5 +1,5 @@
 #include "app.h"
-#include "pa_backend.h"
+#include "a_backend.h"
 #include "settings.h"
 
 #include <glib/gi18n.h>
@@ -106,7 +106,7 @@ static void on_hide_profiles_toggled(GtkToggleButton *btn, gpointer user_data)
 	App *app = user_data;
 	app->settings.hide_unavailable_profiles = gtk_toggle_button_get_active(btn);
 	settings_save(&app->settings);
-	pa_backend_refresh_cards(app);
+	a_backend_refresh_cards(app);
 }
 
 static void on_mono_toggled(GtkToggleButton *btn, gpointer user_data)
@@ -266,7 +266,6 @@ static App *app_new(void)
 
 static void app_free(App *app)
 {
-	pa_backend_stop(app);
 	settings_save(&app->settings);
 
 	app->shutting_down = TRUE;
@@ -276,6 +275,8 @@ static void app_free(App *app)
 	g_hash_table_destroy(app->sink_rows);
 	g_hash_table_destroy(app->source_rows);
 	g_hash_table_destroy(app->card_rows);
+
+	a_backend_stop(app);
 
 	g_hash_table_destroy(app->sink_names);
 	g_hash_table_destroy(app->source_names);
@@ -287,6 +288,13 @@ static void app_free(App *app)
 	g_free(app);
 }
 
+static gboolean opt_version = FALSE;
+static const GOptionEntry entries[] =
+{
+	{ "version", 'v', 0, G_OPTION_ARG_NONE, &opt_version, N_("Show version information"), NULL },
+	{ NULL, 0, 0, 0, NULL, NULL, NULL }
+};
+
 int main(int argc, char **argv)
 {
 	setlocale(LC_ALL, "");
@@ -294,21 +302,34 @@ int main(int argc, char **argv)
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 	textdomain(GETTEXT_PACKAGE);
 
-	gtk_init(&argc, &argv);
+	GError *error = NULL;
+	if (!gtk_init_with_args(&argc, &argv, _("Volume Control"), entries, GETTEXT_PACKAGE, &error))
+	{
+		g_print("%s\n", error->message);
+		g_error_free(error);
+		return 1;
+	}
+
+	if (opt_version)
+	{
+		g_print("%s %s (%s)\n", "pavoldcontrol", "5.1", a_backend_name());
+		return 0;
+	}
 
 	App *app = app_new();
 	build_ui(app);
 
-	if (!pa_backend_start(app))
+	if (!a_backend_start(app))
 	{
 		GtkWidget *dialog = gtk_message_dialog_new(
 			GTK_WINDOW(app->window), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR,
-			GTK_BUTTONS_CLOSE, "%s", _("Could not connect to PulseAudio."));
+			GTK_BUTTONS_CLOSE, _("Could not connect to %s."), a_backend_name());
 		gtk_dialog_run(GTK_DIALOG(dialog));
 		gtk_widget_destroy(dialog);
 		app_free(app);
 		return 1;
 	}
+
 	gtk_main();
 
 	app_free(app);
